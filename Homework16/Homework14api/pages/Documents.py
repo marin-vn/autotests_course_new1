@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 class Documents(Region):
     """Документы"""
-    popup_confirmation = ControlsPopupConfirmation()
     create_doc = ExtControlsDropdownAddButton()
     timeoff_list = ControlsTreeGridView(SabyBy.DATA_QA, 'wtd-List', 'Реестр')
     timeoff_description = Element(By.CSS_SELECTOR, '.wtd-List__mainInfo-noteText', 'Описание')
@@ -15,7 +14,7 @@ class Documents(Region):
     def open(self):
         """Переходим в 'Сотрудники' -> 'Графики работ', вкладка 'Документы'"""
 
-        self.browser.open('https://fix-online.sbis.ru/page/work-schedule-documents')
+        self.browser.open(f'{self.browser.site}/page/work-schedule-documents')
         self.check_page_load_wasaby()
 
     def create_document(self, regulation='Отгул'):
@@ -26,26 +25,27 @@ class Documents(Region):
 
         self.create_doc.select(regulation)
 
-    def check_timeoff(self):
+    def check_timeoff(self, employee='Любовь Лисичкина', cause='Введите возможную причину'):
+        """
+        Создание карточки отгула
+        :param employee: Сотрудник
+        :param cause: Причина
+        """
 
         date = (datetime.today() + timedelta(days=1)).strftime("%d.%m.%y")
         create_doc = Documents(self.driver)
-        timeoff = create_doc.timeoff_list.item(contains_text='Любовь Лисичкина')
+        timeoff = create_doc.timeoff_list.item(contains_text=employee)
         create_doc.timeoff_description.add_parent(timeoff)
-        create_doc.timeoff_description.should_be(ExactText('Введите возможную причину'))
-        self.timeoff_date.should_be(ExactText(date))
+        create_doc.timeoff_description.should_be(ExactText(cause))
+        create_doc.timeoff_date.add_parent(timeoff)
+        create_doc.timeoff_date.should_be(ExactText(date))
 
     def check_timeoff_hour(self):
+        """Проверить отображение указанного времени в документе"""
 
         self.timeoff_hours.should_be(ContainsText('12:00-14:00'))
 
-    def delete_document(self, executor_name, confirm: bool = True):
-
-        self.timeoff_list.item(contains_text=executor_name).delete()
-        if confirm:
-            self.popup_confirmation.confirm()
-
-    def select_item(self, search_str: str):
+    def open_item(self, search_str: str):
         """
         Открыть запись
         :param search_str:

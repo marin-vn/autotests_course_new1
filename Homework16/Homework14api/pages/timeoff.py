@@ -12,7 +12,6 @@ class Dialog(DocumentTemplate):
     hour_off_start = ControlsInputMask(SabyBy.DATA_QA, 'wtd-TimeIntervalMinutes__start', 'Часы начало')
     hour_off_end = ControlsInputMask(SabyBy.DATA_QA, 'wtd-TimeIntervalMinutes__end', 'Часы конец')
     hours_off = Button(By.CSS_SELECTOR, '.icon-TimeSkinny', 'Часы отгула')
-    suggest = Element(SabyBy.DATA_QA, 'controls-suggestPopup', 'Саджест по сотрудникам')
     executor = ControlsLookupInput(SabyBy.DATA_QA, 'staff-Lookup__input', 'Исполнитель')
     description = RichEditorExtendedEditor(SabyBy.DATA_QA, 'wtd-Base__comment', 'Причина отгула')
     for_execution = ControlsButton(By.CSS_SELECTOR, '.edo3-PassageButton', 'На выполнение')
@@ -60,12 +59,19 @@ class Dialog(DocumentTemplate):
 
     def select_executor(self, executor_name):
         """
+        Выбрать исполнителя
         :param executor_name: исполнитель
         """
-        self.executor.click().select(executor_name)
+        self.executor.select_from_catalog(executor_name)
 
     def check_executor(self, executor_name):
         """
+        Проверить исполнителя
         :param executor_name: исполнитель
         """
         self.executor.should_be(ContainsText(executor_name))
+
+    def check_load(self):
+        """Проверка загрузки карточки"""
+
+        self.time_off.suggest.check_load()

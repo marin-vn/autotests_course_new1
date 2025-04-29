@@ -5,8 +5,8 @@ SOFT_RESTART = false
 ELEMENT_OUTPUT_LOG = 'user_friendly'
 DELAY_ACTION = 0.5
 HIGHLIGHT_ACTION = true
+SITE = 'https://fix-online.sbis.ru'
 
 [custom]
-SITE = 'https://fix-online.sbis.ru/page/work-schedule-documents'
 USER_LOGIN = 'филихаус'
 USER_PASSWORD = 'Пароль123'
